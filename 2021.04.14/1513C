@@ -1,0 +1,87 @@
+/******************************************************************************
+ 
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+ 
+*******************************************************************************/
+ 
+#include <iostream>
+ 
+ 
+long long int arrk[10][1000000];
+long long int arr1[10];
+using namespace std;
+ 
+int count(int k, int m)
+{
+    if (m < 9 - k)
+    {
+        return (1);
+    }
+    else
+    {
+        return ((arrk[0][m + k - 9] + arrk[1][m + k - 9] + arrk[2][m + k - 9] + arrk[3][m + k - 9] + arrk[4][m + k - 9] + arrk[5][m + k - 9] + arrk[6][m + k - 9] + arrk[7][m + k - 9] + arrk[8][m + k - 9] + arrk[9][m + k - 9]) % 1000000007);
+    }
+}
+ 
+int main()
+{
+    arrk[0][0] = 1;
+    arrk[1][0] = 1;
+    arrk[2][0] = 0;
+    arrk[3][0] = 0;
+    arrk[4][0] = 0;
+    arrk[5][0] = 0;
+    arrk[6][0] = 0;
+    arrk[7][0] = 0;
+    arrk[8][0] = 0;
+    arrk[9][0] = 0;
+    
+    for (int i = 1; i < 1000000; i++)
+    {
+        for (int k = 0; k < 10; k ++)
+        {
+            if (k == 9)
+            {
+                arrk[0][i] = arrk[9][i-1];
+                arrk[1][i] += arrk[9][i-1];
+                arrk[1][i] = arrk[1][i] % 1000000007;
+            }
+            else
+            {
+                arrk[k+1][i] = arrk[k][i-1] % 1000000007;
+            }
+        }
+    }
+    long int t;
+    long int arr[1000000];
+    string n;
+    long int m;
+    cin >> t;
+    int s;
+    int k;
+    int j;
+    for (int i = 0; i < t; i++)
+    {
+        cin >> n >> m;
+        for (k = 0; k < 10; k++)
+        {
+            arr1[k] = 0;
+        }
+        for (j = 0; j < n.length(); j ++)
+        {
+            arr1[int(n[j]) - int('0')]++;
+        }
+        arr[i] = 0;
+        for (int k = 0; k < 10; k++)
+        {
+            arr[i] = (arr[i] + count(k,m-1)*arr1[k]) % 1000000007; 
+        }
+    }
+    for (int i = 0; i < t; i++)
+    {
+        cout << arr[i] << "\n";
+    }
+    return 0;
+}
