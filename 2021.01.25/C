@@ -1,0 +1,321 @@
+/******************************************************************************
+ 
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+ 
+*******************************************************************************/
+ 
+#include <iostream>
+#include <stdio.h>
+ 
+#define assert(x) if (!(x)) { fprintf(stderr, "Assertion failed: %s", #x); exit(1); }
+ 
+using namespace std;
+ 
+void error(char* s) {
+    fprintf(stderr, "Runtime error: %s", s);
+    exit(1);
+}
+ 
+enum ExpressionKind {
+    PLUS, MINUS, VALUE, VARIABLE
+};
+ 
+struct Expression {
+    ExpressionKind kind;
+    /*
+        1 - plus
+        2 - minus
+        3 - value
+        4 - variable
+    */
+    Expression* left;
+    Expression* right;
+    long long int value;
+    string variable;
+ 
+    Expression(Expression* l, Expression* r, ExpressionKind k) :
+        left(l), right(r), kind(k), value(0), variable("") {}
+ 
+    Expression(int v) :
+        left(NULL), right(NULL), kind(VALUE), value(v), variable("") {}
+ 
+    Expression(string s) :
+        left(NULL), right(NULL), kind(VARIABLE), value(0), variable(s) {}
+ 
+    long long int getValue() {
+        assert(kind == VALUE);
+        return value;
+    }
+    string getVariable() {
+        assert(kind == VARIABLE);
+        return variable;
+    }
+    Expression* getLeft() {
+        assert((kind == PLUS || kind == MINUS));
+        return left;
+    }
+    Expression* getRight() {
+        assert((kind == PLUS || kind == MINUS));
+        return right;
+    }
+};
+ 
+struct Variable {
+    string name;
+    long long int minimum;
+    long long int maximum;
+    long long int number;
+};
+ 
+ 
+Variable* variables;
+ 
+void downVariables(Expression);
+void upVariables(Expression);
+ 
+unsigned index = 0;
+string s;
+long long int n;
+int m;
+ 
+int rest = 0;
+ 
+long long int find(string s)
+{
+    long long int k = 0;
+    while (true)
+    {
+        if (variables[k].name == s)
+        {
+            break;
+        }
+        k++;
+    }
+    return k;
+}
+ 
+void upVariables(Expression e)
+{
+    if (e.kind == PLUS)
+    {
+        upVariables(*e.getLeft());
+        upVariables(*e.getRight());
+    }
+    else if (e.kind == MINUS)
+    {
+        upVariables(*e.getLeft());
+        downVariables(*e.getRight());
+    }
+    else if (e.kind == VALUE)
+    {
+        rest += e.getValue();
+    }
+    else
+    {
+        variables[find(e.getVariable())].number++;
+    }
+}
+ 
+void downVariables(Expression e)
+{
+    if (e.kind == PLUS)
+    {
+        downVariables(*e.getLeft());
+        downVariables(*e.getRight());
+    }
+    else if (e.kind == MINUS)
+    {
+        downVariables(*e.getLeft());
+        upVariables(*e.getRight());
+    }
+    else if (e.kind == VALUE)
+    {
+        rest -= e.getValue();
+    }
+    else
+    {
+        variables[find(e.getVariable())].number--;
+    }
+}
+ 
+long long int parseInt(long long int num = 0)
+{
+    if (index == s.length())
+    {
+        return num;
+    }
+    else if (('0' <= s[index]) && (s[index] <= '9'))
+    {
+        char ch = s[index];
+        index++;
+        return (parseInt(num * 10 + (ch - '0')));
+    }
+    else
+    {
+        return num;
+    }
+}
+ 
+string parseString()
+{
+    if (index == s.length())
+    {
+        return "";
+    }
+    else if (('a' <= s[index]) && (s[index] <= 'z'))
+    {
+        char ch = s[index];
+        index++;
+        return (ch + (parseString()));
+    }
+    else
+    {
+        return "";
+    }
+}
+ 
+Expression* parse()
+{
+    Expression* e = NULL;
+    if (('0' <= s[index]) && (s[index] <= '9'))
+    {
+        e = new Expression(parseInt());
+    }
+    else if (s[index] == '(')
+    {
+        index++;
+        e = parse();
+        index++;
+    }
+    else
+    {
+        e = new Expression(parseString());
+    }
+    if (e == NULL) { while (true) {} };
+ 
+    while (true)
+    {
+        if (index == s.length())
+        {
+            break;
+        }
+        else if (s[index] == ')')
+        {
+            break;
+        }
+        else
+        {
+            if (s[index] == '+')
+            {
+                index++;
+                Expression* t;
+                if (('0' <= s[index]) && (s[index] <= '9'))
+                {
+                    t = new Expression(parseInt());
+                }
+                else if (s[index] == '(')
+                {
+                    index++;
+                    t = parse();
+                    index++;
+                }
+                else
+                {
+                    t = new Expression(parseString());
+                }
+                e = new Expression(e, t, PLUS);
+            }
+            else
+            {
+                index++;
+                Expression* t;
+                if (('0' <= s[index]) && (s[index] <= '9'))
+                {
+                    t = new Expression(parseInt());
+                }
+                else if (s[index] == '(')
+                {
+                    index++;
+                    t = parse();
+                    index++;
+                }
+                else
+                {
+                    t = new Expression(parseString());
+                }
+                e = new Expression(e, t, MINUS);
+            }
+        }
+    }
+    return e;
+}
+ 
+long long int count()
+{
+    long long int k = m - 1;
+    long long int n = 0;
+    while (k > -1)
+    {
+        if (variables[k].number > 0)
+        {
+            n += variables[k].number * variables[k].maximum;
+        }
+        else
+        {
+            n += variables[k].number * variables[k].minimum;
+        }
+        k--;
+    }
+    return n;
+}
+ 
+void coutExpression(Expression e)
+{
+    if (e.kind == PLUS)
+    {
+        coutExpression(*e.getLeft());
+        cout << "+";
+        coutExpression(*e.getRight());
+    }
+    else if (e.kind == MINUS)
+    {
+        coutExpression(*e.getLeft());
+        cout << "-(";
+        coutExpression(*e.getRight());
+        cout << ")";
+    }
+    else if (e.kind == VALUE)
+    {
+        cout << e.getValue();
+    }
+    else
+    {
+        cout << e.getVariable();
+    }
+}
+ 
+int main()
+{
+    cin >> n >> m;
+    cin >> s;
+    variables = new Variable[m];
+    long long int k = m;
+    while (k != 0)
+    {
+        string s;
+        long long int n1;
+        long long int n2;
+        cin >> s >> n1 >> n2;
+        variables[m - k].name = s;
+        variables[m - k].minimum = n1;
+        variables[m - k].maximum = n2;
+        variables[m - k].number = 0;
+        k--;
+    }
+    Expression* e = parse();
+    upVariables(*e);
+    cout << count() + rest;
+    return 0;
+}
