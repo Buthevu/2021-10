@@ -1,0 +1,169 @@
+#include <iostream>
+#include <cmath>
+ 
+using namespace std;
+ 
+int scan(string s)
+{
+    int a = 0;
+    bool spot = false;
+    int i = 0;
+    int b = 0;
+    while (s[i] != '.')
+    {
+        a = a * 10 + (s[i] - '0');
+        i++;
+    }
+    i++;
+    int r = 0;
+    while (i != s.size())
+    {
+        b = b * 10 + (s[i] - '0');
+        i++;
+        r++;
+    }
+    return (a* 1000000 + b * pow(10,6 - r));
+}
+ 
+int main()
+{
+    int n;
+    cin >> n;
+    int *num = new int[n];
+    string s;
+    int t;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> s;
+        num[i] = scan(s);
+    }
+    /*for (int i = 0; i < n; i++)
+    {
+        cout << num[i] << endl;
+    }*/
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; (j + 1) < n; j++)
+        {
+            if (num[j] > num[j + 1])
+            {
+                t = num[j + 1];
+                num[j + 1] = num[j];
+                num[j] = t;
+            }
+        }
+    }
+    int k = 0;
+    int bestK = 0;
+    int bestdelta;
+    if (n == 1)
+    {
+        bestdelta = 0;
+    }
+    else 
+    {
+        bestdelta = max(num[k] - num[0], num[n - 1] - num[k + 1]);
+    }
+    while (true)
+    {
+        if (k == (n - 1))
+        {
+            break;
+        }
+        else
+        {
+            if (max(num[k] - num[0], num[n - 1] - num[k + 1]) <= bestdelta)
+            {
+                bestK = k;
+                bestdelta = max(num[k] - num[0], num[n - 1] - num[k + 1]);
+                k++;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    k = bestK;
+    //cout << k << endl << endl;
+    int x;
+    bool fin = false;
+    for (int i = 0; i < k; i++)
+    {
+        if (num[i + 1] != (num[i] + 1))
+        {
+            x = num[i] + 1;
+            printf ("%d.%06d", x / 1000000, x % 1000000);
+            //cout<<"A";
+            fin = true;
+            break;
+        }
+    }
+    for (int i = k + 1; i < n - 1; i++)
+    {
+        if (fin)
+        {
+            break;
+        }
+        if (num[i + 1] != (num[i] + 1))
+        {
+            x = num[i] + 1;
+            printf ("%d.%06d", x / 1000000, x % 1000000);
+            //cout<<"B";
+            fin = true;
+            break;
+        }
+    }
+    if ((n == 1)&&(!fin))
+    {
+        if (num[0] == 1000000000)
+        {
+            cout<<"999.999999";
+            fin = true;
+        }
+        else
+        {
+            x = num[0] + 1;
+            printf ("%d.%06d", x / 1000000, x % 1000000);
+            fin = true;
+        }
+    }
+    if (!fin)
+    {
+        if ((num[k]) + 1 != num[k + 1])
+        {
+            if ((num[k] - num[0]) < (num[n-1] - num[k+1]))
+            {
+                int x = num[k] + 1;
+                printf ("%d.%06d", x / 1000000, x % 1000000);
+                //cout<<"C1";
+                fin = true;
+            }
+            else
+            {
+                int x = num[k + 1] - 1;
+                printf ("%d.%06d", x / 1000000, x % 1000000);
+                //cout<<"C2";
+                fin = true;
+            }
+        }
+        else
+        {
+            if (num[0] != 0)
+            {
+                x = num[0] - 1;
+                printf ("%d.%06d", x / 1000000, x % 1000000);
+                //cout<<"D";
+                fin = true;
+            }
+            else
+            {
+                x = num[n-1] + 1;
+                printf ("%d.%06d", x / 1000000, x % 1000000);
+                //cout<<"E";
+                fin = true;
+            }
+        }
+    }
+    return 0;
+}
