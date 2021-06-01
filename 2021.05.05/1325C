@@ -1,0 +1,81 @@
+#include <iostream>
+ 
+using namespace std;
+ 
+int arr[100000][2];
+int help[100001][3];
+ 
+void add(int x, int y)
+{
+    if (help[x][0] == -1)
+    {
+        help[x][0] = y;
+    }
+    else if (help[x][1] == -1)
+    {
+        help[x][1] = y;
+    }
+    else
+    {
+        help[x][2] = y;
+    }
+}
+ 
+ 
+int main()
+{
+    int n;
+    cin >> n;
+    for (int i = 0; i < n + 1; i ++)
+    {
+        help[i][0] = -1;
+        help[i][1] = -1;
+        help[i][2] = -1;
+    }
+    for (int i = 0; i < n - 1; i++)
+    {
+        cin >> arr[i][0] >> arr[i][1];
+        add(arr[i][0],arr[i][1]);
+        add(arr[i][1],arr[i][0]);
+    }
+    bool p = false;
+    int find;
+    for (int i = 1; i < n; i++)
+    {
+        if (help[i][2] != -1)
+        {
+            p = true;
+            find = i;
+            break;
+        }
+    }
+    if (p == true)
+    {
+		int k = 3;
+        for (int i = 0; i < n - 1; i++)
+        {
+            if ((arr[i][0] == find)||(arr[i][1] == find))
+            {
+			    int j = arr[i][0] + arr[i][1] - find;
+			    if (help[find][0] == j) cout << 0 << endl;
+			    else if (help[find][1] == j) cout << 1 << endl;
+			    else if (help[find][2] == j) cout << 2 << endl;
+			    else
+			    {
+			        cout << k << '\n';
+			        k ++;
+			    }
+		    }
+		    else
+		    {
+			    cout << k << endl;
+			    k++;
+		    }
+        }
+    }
+    else
+    {
+		for (int i = 0; i < n - 1; i ++) cout << i << '\n';
+	}
+    return 0;
+}
