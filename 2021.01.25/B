@@ -1,0 +1,62 @@
+/******************************************************************************
+ 
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+ 
+*******************************************************************************/
+ 
+#include <iostream>
+#include <cmath>
+ 
+using namespace std;
+ 
+int main()
+{
+    int a =  0;
+    cout << "? 0" << endl;
+    fflush(stdout);
+    int n;
+    cin >> n;
+    int index = 0;
+    int numTestsLeft = 29;
+    int numOfOnesIFound = 0;
+    int k;
+    while((numTestsLeft != 0) && (index < 31) && (numOfOnesIFound < n))
+    {
+        cout << "? " << int(pow(2,index)) << endl;
+        fflush(stdout);
+        cin >> k;
+        if (k != n + 1)
+        {
+            numOfOnesIFound = n - k + 1 + numOfOnesIFound;
+            a = a + int(pow(2,index + 1 + (n - k))) - int (pow(2,index));
+            index = index + (n - k) + 2;
+            numTestsLeft = numTestsLeft - 1;
+        }
+        else
+        {
+            index++;
+            numTestsLeft = numTestsLeft - 1;
+        }
+    }
+    if (numOfOnesIFound == n)
+    {
+        cout << a;
+    }
+    else 
+    {
+        if (n == 1) 
+        {
+            cout << int(pow(2,29));
+        }
+        else 
+        {
+            while(true)
+            {
+                int k = 0;
+            }
+        }
+    }
+    return 0;
+}
