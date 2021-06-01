@@ -1,0 +1,83 @@
+/******************************************************************************
+ 
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+ 
+*******************************************************************************/
+ 
+#include <iostream>
+ 
+using namespace std;
+ 
+int max(int a, int b)
+{
+    if (a < b)
+    {
+        return b;
+    }
+    else
+    {
+        return a;
+    }
+}
+ 
+int n;
+ 
+string upper(string s)
+{
+    string s1 = "";
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (('a' <= s[i]) && (s[i] <= 'z'))
+        {
+            s1 = s1 + string(1,s[i] + 'A' - 'a');
+        }
+        else
+        {
+            s1 = s1 + string(1,s[i]);
+        }
+    }
+    return s1;
+}
+ 
+string arr[200][2];
+ 
+string h;
+ 
+int count(int i, string s)
+{
+    if (i == n)
+    {
+        return 0;
+    }
+    else
+    {
+        if (arr[i][1] == s)
+        {
+            return (max(count(i + 1, s), 1 + count(i + 1, arr[i][0])));
+        }
+        else
+        {
+            return (count(i + 1, s));
+        }
+    }
+}
+ 
+int main()
+{
+    cin >> n;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> h;
+        arr[i][0] = upper(h);
+        cin >> h;
+        cin >> h;
+        arr[i][1] = upper(h);
+    }/*
+    for (int i = 0; i < n; i++)
+    {
+        cout << arr[i][0] << " " << arr[i][1] << endl;
+    }*/
+    cout << count(0, "POLYCARP") + 1;
+}
