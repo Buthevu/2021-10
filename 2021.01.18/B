@@ -1,0 +1,82 @@
+#include <iostream>
+#include <string>
+//#include <fstream>
+using namespace std;
+ 
+ 
+//string firstline;
+int questions[300000];
+ 
+int main()
+{
+    int n;
+    int m;
+    
+    cin >> n >> m;
+    //string line;
+    //ios_base::sync_with_stdio(false);
+    
+    int t = 0;
+    int maxt = 0;
+    char c;
+    bool b = false;
+    while (cin.get(c))
+    {
+        if (c == '\n')
+        {
+            //cout << "read" << std::endl;
+            if(b) break;
+            b = true;
+        }
+        else
+        {
+            if (c == '0')
+            {
+                if (t > maxt)
+                {
+                    maxt = t;
+                }
+                t = 0;
+ 
+            }
+            else
+            {
+                t++;
+            }
+        }
+    }
+   
+    //cin >> line;
+    /*for (int i = 0; i < n; i++)
+    {
+        if (line[i] == '0')
+        {
+            if (t > maxt)
+            {
+                maxt = t;
+            }
+            t = 0;
+ 
+        }
+        else 
+        {
+            t++;
+        }
+    }*/
+    for (int i = 0; i < m; i++)
+    {
+        cin >> questions[i];
+    }
+    for (int i = 0; i < m; i++)
+    {
+        if (questions[i] > maxt)
+        {
+            cout << "YES" << '\n';
+        }
+        else
+        {
+            cout << "NO" << '\n';
+        }
+    }
+    return 0;
+}
