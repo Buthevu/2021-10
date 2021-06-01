@@ -1,0 +1,58 @@
+/******************************************************************************
+
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+
+*******************************************************************************/
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    string s;
+    cin >> s;
+    long long int help[256];
+    for (int i = 0; i < 256; i ++) help[i] = 0;
+    for (int i = 0; i < s.length(); i++) help[int(s[i])] += 1;
+    long long int arr[100][100];
+    for (int i = 0; i < 100; i++) arr[0][i] = 1;
+    for (int i = 1; i < 100; i++) arr[i][1] = 1;
+    for (int i = 1; i < 100; i++)
+    {
+        for (int j = 2; j < 100; j++)
+        {
+            arr[i][j] = 0;
+            for (int k = 0; k < i + 1; k++)
+            {
+                arr[i][j] += arr[i-k][j-1];
+            }
+        }
+    }/*
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            cout << arr[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << arr[2][2] << endl;*/
+    long long int help2[257];
+    help2[0] = 1;
+    long long int help3[256];
+    help3[0] = help[0];
+    for (int i = 1; i < 256; i ++)
+    {
+        help3[i] = help3[i-1] + help[i];
+    }
+    for (int i = 1; i < 257; i ++)
+    {
+        //cout << help2[i-1] << "   ";
+        help2[i] = help2[i-1] * arr[help[i-1]][(help3[i-1] - help[i-1]) + 1];
+    }
+    cout << help2[256];
+    return 0;
+}
